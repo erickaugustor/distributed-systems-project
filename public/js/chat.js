@@ -13,6 +13,7 @@ document.querySelector('#message-form').addEventListener('submit', (e) => {
   });
 });
 
+/*
 document.querySelector('#send-location').addEventListener('click', () => {
   if (!navigator.geolocation) {
     return alert('Geolocation is not supported by your browser');
@@ -24,4 +25,9 @@ document.querySelector('#send-location').addEventListener('click', () => {
       longitude: position.coords.longitude,
      });
   });
+});
+*/
+
+document.querySelector('#service-one').addEventListener('click', () => {
+  socket.emit('serviceOne', 'I want!');
 });
