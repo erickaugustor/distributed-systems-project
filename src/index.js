@@ -2,6 +2,7 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
+const writeLogger = require('./services/writeLogger');
 
 const app = express();
 const server = http.createServer(app);
@@ -13,6 +14,7 @@ const publicDirectoryPath = path.join(__dirname, '../public');
 const mappingServicesByServer = [];
 const mappingServicesInfo = [];
 const listOfServers = [];
+const data = new Date();
 
 app.use(express.static(publicDirectoryPath));
 
@@ -27,14 +29,14 @@ io.on('connection', (socket, a) => {
     callback();
   });
 
-  socket.on('imServer', (servicos) => {
+  socket.on('imServer', (services) => {
     mappingServicesByServer.push({
       server: socket.id,
-      servicos,
+      services,
     });
 
     services.forEach(service => {
-      if (listOfServers.find(service)) {
+      if (listOfServers.find((item) => service === item)) {
         mappingServicesInfo[service].servers.push(socket.id);
       };
 
@@ -45,8 +47,8 @@ io.on('connection', (socket, a) => {
     });
   });
 
-  socket.on('imAlive', (servicos) => {
-    console.log('im alive');
+  socket.on('imAlive', (service) => {
+    console.log('im alive', service);
   });
 
   socket.on('serviceOne', (what) => {
@@ -60,5 +62,6 @@ io.on('connection', (socket, a) => {
 });
 
 server.listen(port, () => {
+  writeLogger.welcomeMessage(port);
   console.log(`Server is up on port ${port}!`);
 });

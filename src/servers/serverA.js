@@ -1,8 +1,10 @@
 const io = require('socket.io-client');
 const socket = io.connect('http://localhost:3000', {reconnect: true});
-const services = require('../services/servicesForServers');
 
-const services = [services.SERVICE_ONE, services.SERVICE_FOUR];
+const { SERVICE_ONE, SERVICE_FOUR } = require('../services/servicesForServers');
+const { TIME_HEART_BEATING } = require('../services/constant');
+
+const services = [SERVICE_ONE, SERVICE_FOUR];
 
 socket.on('connect', (socket) => { 
   console.log('Connected!');
@@ -14,4 +16,4 @@ const heartBeating = () => {
   socket.emit('imAlive', services);
 };
 
-setInterval(heartBeating, 1000);
+setInterval(heartBeating, TIME_HEART_BEATING);
