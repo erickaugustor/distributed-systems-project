@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const whereIsFile = './data/logger.txt';
+const whereIsFile = './logger/logger.txt';
 const newLine = '\n';
 
 const newMessage = (message) => {

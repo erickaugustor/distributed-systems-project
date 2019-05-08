@@ -14,6 +14,8 @@ const publicDirectoryPath = path.join(__dirname, '../public');
 const mappingServicesByServer = [];
 const mappingServicesInfo = [];
 const listOfServers = [];
+
+let countServer = 0;
 const data = new Date();
 
 app.use(express.static(publicDirectoryPath));
@@ -30,6 +32,9 @@ io.on('connection', (socket, a) => {
   });
 
   socket.on('imServer', (services) => {
+    countServer++;
+    writeLogger.newMessage(`[SERVER-00${countServer}][${data.getDate}] - New Server: ${socket.id} `);
+
     mappingServicesByServer.push({
       server: socket.id,
       services,
@@ -56,6 +61,7 @@ io.on('connection', (socket, a) => {
   });
 
   socket.on('disconnect', () => {
+    countServer--;
     mappingServicesByServer.filter(item => item.server !== socket.id);
     io.emit('message', 'A user has left! :(');
   });
