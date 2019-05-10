@@ -1,5 +1,7 @@
 const socket = io();
 
+socket.emit('imClient', 'hi');
+
 socket.on('message', (message) => {
   console.log(message);
 });

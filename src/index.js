@@ -33,12 +33,14 @@ io.on('connection', (socket, a) => {
 
   socket.on('imServer', (services) => {
     countServer++;
-    writeLogger.newMessage(`[SERVER-00${countServer}][${data.getDate}] - New Server: ${socket.id} `);
+    writeLogger.newMessage(`[SERVER-00${countServer}][${data.toString()}] - New Server: ${socket.id} `);
 
     mappingServicesByServer.push({
       server: socket.id,
       services,
     });
+
+    listOfServers.push(socket.id);
 
     services.forEach(service => {
       if (listOfServers.find((item) => service === item)) {
@@ -52,6 +54,10 @@ io.on('connection', (socket, a) => {
     });
   });
 
+  socket.on('imClient', (message) => {
+    console.log('omgIm ', message);
+  });
+
   socket.on('imAlive', (service) => {
     console.log('im alive', service);
   });
@@ -61,9 +67,12 @@ io.on('connection', (socket, a) => {
   });
 
   socket.on('disconnect', () => {
-    countServer--;
-    mappingServicesByServer.filter(item => item.server !== socket.id);
-    io.emit('message', 'A user has left! :(');
+    if (listOfServers.includes(socket.id)) {
+      countServer--;
+      mappingServicesByServer.filter(item => item.server !== socket.id);
+    } else {
+      io.emit('message', 'A user has left! :(');
+    }
   });
 });
 
