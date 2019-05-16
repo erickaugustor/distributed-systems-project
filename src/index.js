@@ -2,6 +2,8 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
+const fs = require('fs');
+
 const writeLogger = require('./services/writeLogger');
 
 const app = express();
@@ -19,6 +21,10 @@ let countServer = 0;
 let countClient = 0;
 let countMessage = 0;
 const data = new Date();
+
+if (!fs.existsSync('./logger/')){
+  fs.mkdirSync('./logger/');
+};
 
 app.use(express.static(publicDirectoryPath));
 
