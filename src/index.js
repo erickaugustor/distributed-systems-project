@@ -16,24 +16,36 @@ const mappingServicesInfo = [];
 const listOfServers = [];
 
 let countServer = 0;
+let countClient = 0;
+let countMessage = 0;
 const data = new Date();
 
 app.use(express.static(publicDirectoryPath));
 
-io.on('connection', (socket, a) => {
-  console.log('New WebSocket connection: ', socket.id);
+io.on('connection', (socket) => {
+  const socketInfo = {};
 
-  socket.emit('message', 'Welcome!');
-  socket.broadcast.emit('message', 'A new user has joined!');
+  socket.emit('message', `Welcome ${socket.id}`);
+  socket.broadcast.emit('message', `A new user called ${socket.id} has joined!`);
 
-  socket.on('sendMessage', (message, callback) => {
-    io.emit('message', message);
-    callback();
+  socket.on('sendMessage', message => {
+    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - Send a message to the server: "${message}"`);
+    countMessage++;
+
+    const messagePack = {
+      id: socketInfo.id,
+      countMessage,
+      name: socketInfo.name,
+      message,
+    };
+
+    io.to(listOfServers[0]).emit('reciveMessage', messagePack);
   });
 
   socket.on('imServer', (services) => {
     countServer++;
-    writeLogger.newMessage(`[SERVER-00${countServer}][${data.toString()}] - New Server: ${socket.id} `);
+    socketInfo.name = `SERVER-00${countServer}`;
+    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - New Server: ${socket.id} `);
 
     mappingServicesByServer.push({
       server: socket.id,
@@ -55,23 +67,24 @@ io.on('connection', (socket, a) => {
   });
 
   socket.on('imClient', (message) => {
-    console.log('omgIm ', message);
+    countClient++;
+    socketInfo.id = socket.id;
+    socketInfo.name = `USER-00${countClient}`;
+    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - New User: ${socket.id} `);
   });
 
-  socket.on('imAlive', (service) => {
-    console.log('im alive', service);
-  });
-
-  socket.on('serviceOne', (what) => {
-    console.log(what);
+  socket.on('imAlive', (services) => {
+    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - Heart Beating: ${services} `);
   });
 
   socket.on('disconnect', () => {
+    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - Goodbye: ${socket.id} `);
+
     if (listOfServers.includes(socket.id)) {
-      countServer--;
       mappingServicesByServer.filter(item => item.server !== socket.id);
+      listOfServers.filter(item => item.server !== socket.id);
     } else {
-      io.emit('message', 'A user has left! :(');
+      io.emit('message', `The user ${socketInfo.name} has left!`);
     }
   });
 });
