@@ -20,7 +20,6 @@ const listOfServers = [];
 let countServer = 0;
 let countClient = 0;
 let countMessage = 0;
-const data = new Date();
 
 if (!fs.existsSync('./logger/')){
   fs.mkdirSync('./logger/');
@@ -35,7 +34,7 @@ io.on('connection', (socket) => {
   socket.broadcast.emit('message', `A new user called ${socket.id} has joined!`);
 
   socket.on('sendMessage', message => {
-    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - Send a message to the server: "${message}"`);
+    writeLogger.newMessage(`[${socketInfo.name}][${new Date().toString()}] - Send a message to the server: "${message}"`);
     countMessage++;
 
     const messagePack = {
@@ -51,7 +50,7 @@ io.on('connection', (socket) => {
   socket.on('imServer', (services) => {
     countServer++;
     socketInfo.name = `SERVER-00${countServer}`;
-    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - New Server: ${socket.id} `);
+    writeLogger.newMessage(`[${socketInfo.name}][${new Date().toString()}] - New Server: ${socket.id} `);
 
     mappingServicesByServer.push({
       server: socket.id,
@@ -76,15 +75,15 @@ io.on('connection', (socket) => {
     countClient++;
     socketInfo.id = socket.id;
     socketInfo.name = `USER-00${countClient}`;
-    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - New User: ${socket.id} `);
+    writeLogger.newMessage(`[${socketInfo.name}][${new Date().toString()}] - New User: ${socket.id} `);
   });
 
   socket.on('imAlive', (services) => {
-    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - Heart Beating: ${services} `);
+    writeLogger.newMessage(`[${socketInfo.name}][${new Date().toString()}] - Heart Beating: ${services} `);
   });
 
   socket.on('disconnect', () => {
-    writeLogger.newMessage(`[${socketInfo.name}][${data.toString()}] - Goodbye: ${socket.id} `);
+    writeLogger.newMessage(`[${socketInfo.name}][${new Date().toString()}] - Goodbye: ${socket.id} `);
 
     if (listOfServers.includes(socket.id)) {
       mappingServicesByServer.filter(item => item.server !== socket.id);
