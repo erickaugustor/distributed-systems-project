@@ -1,6 +1,8 @@
 
 const TIME_HEART_BEATING = 5000;
+const MAX_NUMBER_OF_COPIES = 2;
 
 module.exports = { 
   TIME_HEART_BEATING,
+  MAX_NUMBER_OF_COPIES,
 }
