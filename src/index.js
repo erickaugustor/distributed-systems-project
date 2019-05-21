@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
       countMessage,
       name: socketInfo.name,
       message,
+      sender: socketInfo.name,
     };
 
     io.to(listOfServers[0]).emit('reciveMessage', messagePack);
@@ -69,16 +70,19 @@ io.on('connection', (socket) => {
 
       mappingServicesInfo.push(newService);
     });
+
+    io.to(socket.id).emit('onReciveMessage');
+    io.to(socket.id).emit('onHeartBeating');
   });
 
-  socket.on('imClient', (message) => {
+  socket.on('imClient', () => {
     countClient++;
     socketInfo.id = socket.id;
     socketInfo.name = `USER-00${countClient}`;
     writeLogger.newMessage(`[${socketInfo.name}][${new Date().toString()}] - New User: ${socket.id} `);
   });
 
-  socket.on('imAlive', (services) => {
+  socket.on('heartBeating', (services) => {
     writeLogger.newMessage(`[${socketInfo.name}][${new Date().toString()}] - Heart Beating: ${services} `);
   });
 

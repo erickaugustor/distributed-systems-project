@@ -8,7 +8,7 @@ const SERVICE_RECIVE_MESSAGE = {
       for (let version = 1; version <= MAX_NUMBER_OF_COPIES; version++) {
         let whereIsFile = `../../logger/[${messagePack.name}-${messagePack.countMessage}][${version}].txt`;
 
-        fs.writeFile(whereIsFile, messagePack.message, (err) => {
+        fs.writeFile(whereIsFile, JSON.stringify(messagePack), (err) => {
           if (err) throw err;
         });
       }

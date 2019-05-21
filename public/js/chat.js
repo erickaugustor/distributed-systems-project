@@ -1,6 +1,6 @@
 const socket = io();
 
-socket.emit('imClient', 'hi');
+socket.emit('imClient');
 
 socket.on('message', (message) => {
   console.log(message);
@@ -14,5 +14,5 @@ document.querySelector('#message-form').addEventListener('submit', (e) => {
 });
 
 document.querySelector('#service-one').addEventListener('click', () => {
-  socket.emit('serviceOne', 'I want!');
+  socket.emit('serviceOne');
 });
