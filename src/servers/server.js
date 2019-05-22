@@ -6,16 +6,20 @@ const { TIME_HEART_BEATING } = require('./services/constant');
 
 const services = [SERVICE_RECIVE_MESSAGE.name];
 
-socket.on('connect', (socket) => { 
-  console.log('Connected!');
+socket.on('connect', () => { 
+  console.log('A sever is up!');
+});
+
+socket.on('onReciveMessage', () => { 
+  startReciveMessage();
+});
+
+socket.on('onHeartBeating', () => { 
+  startReciveHeartBeating();
 });
 
 socket.emit('imServer', services);
 
-SERVICE_RECIVE_MESSAGE.startService(socket);
+const startReciveMessage = () => SERVICE_RECIVE_MESSAGE.startService(socket);
 
-const heartBeating = () => {
-  socket.emit('imAlive', services);
-};
-
-setInterval(heartBeating, TIME_HEART_BEATING);
+const startReciveHeartBeating = () => setInterval(() => socket.emit('heartBeating', services), TIME_HEART_BEATING);
